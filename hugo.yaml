@@ -1,5 +1,5 @@
 # Hugo configuration file
-title: My Site
+title: Code Docsy
 
 # import hextra as module
 module:
@@ -18,17 +18,20 @@ markup:
 
 menu:
   main:
+    - name: AI Agent
+      pageRef: /ai-agent
+      weight: 1
     - name: Docs
       pageRef: /docs
-      weight: 1
+      weight: 2
     - name: About
       pageRef: /about
-      weight: 2
+      weight: 3
     - name: Contact ↗
       url: "https://github.com/imfing"
-      weight: 3
-    - name: Search
       weight: 4
+    - name: Search
+      weight: 5
       params:
         type: search
     - name: GitHub
