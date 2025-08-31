@@ -1,83 +1,53 @@
-# Hextra Starter Template
+# 👋 Welcome to Code Docsy!
 
-[![Deploy Hugo site to Pages](https://github.com/imfing/hextra-starter-template/actions/workflows/pages.yaml/badge.svg)](https://github.com/imfing/hextra-starter-template/actions/workflows/pages.yaml)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/6e83fd88-5ffe-4808-9689-c0f3b100bfe3/deploy-status)](https://app.netlify.com/sites/hextra-starter-template/deploys)
-![Vercel Deployment Status](https://img.shields.io/github/deployments/imfing/hextra-starter-template/production?logo=vercel&logoColor=white&label=vercel&labelColor=black&link=https%3A%2F%2Fhextra-starter-template.vercel.app%2F)
+<!--
 
+**Here are some ideas to get you started:**
 
-🐣 Minimal template for getting started with [Hextra](https://github.com/imfing/hextra)
+🙋‍♀️ A short introduction - what is your organization all about?
+🌈 Contribution guidelines - how can the community get involved?
+👩‍💻 Useful resources - where can the community find your docs? Is there anything else the community should know?
+🍿 Fun facts - what does your team eat for breakfast?
+🧙 Remember, you can do mighty things with the power of [Markdown](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+-->
 
-![hextra-template](https://github.com/imfing/hextra-starter-template/assets/5097752/c403b9a9-a76c-47a6-8466-513d772ef0b7)
-
-[🌐 Demo ↗](https://imfing.github.io/hextra-starter-template/)
-
-## Quick Start
-
-Use this template to create your own repository:
-
-<img src="https://docs.github.com/assets/cb-77734/mw-1440/images/help/repository/use-this-template-button.webp" width=400 />
-
-You can also quickly start developing using the following online development environment:
-
-- [GitHub Codespaces](https://github.com/codespaces) 
-    
-    [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/imfing/hextra-starter-template)
-
-    Create a new codespace and follow the [Local Development](#local-development) to launch the preview
-
-- [Gitpod](https://gitpod.io)
-
-    [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/imfing/hextra-starter-template)
-
-
-## Deployment
-
-### GitHub Pages
-
-A GitHub Actions workflow is provided in [`.github/workflows/pages.yaml`](./.github/workflows/pages.yaml) to [publish to GitHub Pages](https://github.blog/changelog/2022-07-27-github-pages-custom-github-actions-workflows-beta/) for free. 
-
-For details, see [Publishing with a custom GitHub Actions workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow).
-
-Note: in the settings, make sure to set the Pages deployment source to **GitHub Actions**:
-
-<img src="https://github.com/imfing/hextra-starter-template/assets/5097752/99676430-884e-42ab-b901-f6534a0d6eee" width=600 />
-
-[Run the workflow manually](https://docs.github.com/en/actions/using-workflows/manually-running-a-workflow) if it's not triggered automatically.
-
-### Netlify
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/imfing/hextra-starter-template)
-
-### Vercel
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fimfing%2Fhextra-starter-template&env=HUGO_VERSION)
-
-Override the configuration:
-
-<img src="https://github.com/imfing/hextra-starter-template/assets/5097752/e2e3cecd-c884-47ec-b064-14f896fee08d" width=600 />
-
-## Local Development
-
-Pre-requisites: [Hugo](https://gohugo.io/getting-started/installing/), [Go](https://golang.org/doc/install) and [Git](https://git-scm.com)
-
-```shell
-# Clone the repo
-git clone https://github.com/imfing/hextra-starter-template.git
-
-# Change directory
-cd hextra-starter-template
-
-# Start the server
-hugo mod tidy
-hugo server --logLevel debug --disableFastRender -p 1313
+标准的目录如下所示：
+```tree
+your booklet
+├── _index.md
+├── section1
+│   ├── _index.md
+│   ├── chapter1.md
+│   └── chapter2.md
+├── section2
+│   ├── _index.md
+│   ├── chapter3.md
+│   └── chapter4.md
+└── asserts
+    ├── images
+    │   └── app1.png
+    ├── code
+    │   └── your code project
+    └── your custom file
 ```
+不过，如果直接github粘贴的方式不需要这么复杂，github会建文件夹并生成正确的图片地址。
 
-### Update theme
+## 资源推荐
+* [recommend-resources](https://github.com/geek-pie/recommend-resources)整理了非常值得学习的一些资料以及github开源，官网的地址（部分资料有可以直接下载的网盘链接，如果涉及到侵权，请联系删除），欢迎小伙伴们持续贡献！                                                             
 
-```shell
-hugo mod get -u
-hugo mod tidy
-```
+# 版权声明
 
-See [Update modules](https://gohugo.io/hugo-modules/use-modules/#update-modules) for more details.
+* 所有原创文章(未进行特殊标识的均属于原创) 的著作权属于 **Open Backend Bible**。
+* 所有转载文章(标题注明`[转]`的所有文章) 的著作权属于原作者。
+* 所有译文文章(标题注明`[译]`的所有文章) 的原文著作权属于原作者，译文著作权属于 **Open Backend Bible**。
 
+#### 转载注意事项
+
+除注明外，所有文章均采用 [Creative Commons BY-NC-ND 4.0（自由转载-保持署名-非商用-禁止演绎）](http://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh)协议发布。
+
+你可以在非商业的前提下免费转载，但同时你必须：
+
+* 保持文章原文，不作修改。
+* 明确署名，即至少注明 `作者：Sensetime 海外研发中心` 字样以及文章的原始链接，且不得使用 `rel="nofollow"` 标记。
+* 商业用途请点击最下面图片联系本人。
+* 微信公众号转载一律不授权 `原创` 标志。
