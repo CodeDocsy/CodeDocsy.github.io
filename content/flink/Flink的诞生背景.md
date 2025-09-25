@@ -2,18 +2,13 @@
 title: 快速理解Flink架构
 order: 2
 ---
-
-
 # 为什么应该选择Flink？
-
 任何的计算机系统或者分布式系统，总是要考虑两个问题:存储和计算。
 作为流计算框架家族的典型代表，相比较诸如`Spark Streaming`，`Storm`，`Kafka Streams`，`Samza`等其他的流计算框架，Flink有着天然的优势。
 在了解Flink的优势以前，先要对流处理有所了解。
 
 ## 什么是流/流处理
-
 流处理的最优雅的定义是：一种数据处理引擎，其设计时考虑了无限的数据集。与批处理不同，批处理有明显的开始和结束，而处理是在生成有限数据之后才开始完成的，而流处理则是指连续不断地即时处理永久到来的无边界数据。
-
 为了理解任何Streaming框架的优点和局限性，我们应该了解与Stream处理相关的一些重要特征和术语：
 
 ### 交付保证
@@ -76,7 +71,6 @@ github地址：https://github.com/stratosphere/stratosphere
 
 注意，在这个时候，Flink对于批处理是落后于Spark的！人们对于Flink当时并不看好，直到Google流处理论文的发表。
 
-如果想了解，可以到《分布式漫谈》了解如何系统的学习分布式系统章节。
 
 ## Flink关于流计算是如何实现的？
 
@@ -409,3 +403,8 @@ hello
 
 至此，一个Flink的HelloWorld成功了！还是那句话，目标是Hello World，接下来，我们带着问题一步步的深入其中，探寻Flink的神秘地带
 
+
+
+参考
+https://book.douban.com/subject/30329536/
+https://github.com/Vonng/ddia
