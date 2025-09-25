@@ -1,51 +1,294 @@
----
-title: Demo Page
-type: docs
-prev: /
-next: docs/folder/
----
 
+`sign up`:注册
+`sign in`:登录
+`Authentication`:认证
+`Authorization：`授权
+## OAuth 2.0 和 OIDC (OpenID Connect)的关系
 
-# OWASP是什么
-全球知名安全组织OWASP（Open Web Application Security Project）是一个致力于提高软件安全性的非营利性基金会，通过提供免费的文档、工具、项目和教育资源来帮助组织开发和维护安全可靠的应用程序。该组织运作模式是开放社区的，其最著名的成果是《OWASP Top 10》报告。
+## 1. OAuth 2.0
+* **定位**：是一个Authorization框架
+* **目标**：让用户把“资源访问权”授权给第三方应用，而不是把自己的账号密码给对方。
+* **核心思想**：
 
+  * 用户不直接把密码交给第三方。
+  * 第三方通过 **Access Token**（访问令牌）去访问资源服务器。
+* **典型场景**：
 
-每年都在变。
-地址：
-https://owasp.org/www-project-top-ten/
+  * 用 Facebook 账号授权某个应用读取你的好友列表。
+  * 用 Google 账号授权第三方应用访问你的 Google Drive 文件。
 
-下面是 **OWASP API 安全项目** 在 2023 年发布的 **“API 安全十大风险（Top 10）”**，以及各风险的简介与防护建议：([OWASP Foundation][1])
+## 2. OpenID Connect (OIDC)
 
-（提醒：以前的 2019 版也有类似项，2023 版对部分项目做了合并、重命名与新增）([API Security News][2])
+* **定位**：基于 OAuth 2.0 的 **身份认证（Authentication）协议**
+* **目标**：在 OAuth 2.0 授权的基础上，增加“用户身份认证”能力。
+* **新增内容**：
 
----
+  * 定义了一个 **ID Token**（JWT 格式），里面包含了用户的身份信息（如 user id, email, name 等）。
+  * 标准化了用户信息获取的方式（UserInfo Endpoint）。
+* **典型场景**：
 
-## OWASP API 安全十大风险 (2023)
-
-下表列出了 2023 年版的十大 API 安全风险，以及每项的含义与要点：
-
-| 编号             | 名称                                                               | 含义 / 风险点                                                                                                             | 防护要点 / 建议                                                                        |
-| -------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| **API1:2023**  | **Broken Object Level Authorization（对象级授权失效）**                   | API 接口接受客户端传入对象标识符（如用户 ID、订单 ID 等），若没有对该对象进行授权检查，就可能被越权访问、读取或修改不属于该用户的对象。                                            | 对每个请求中的对象 ID 做强授权校验；后端服务层也要做防护，不完全依赖网关；最小权限原则；审计访问模式。                            |
-| **API2:2023**  | **Broken Authentication（认证失效 / 认证破坏）**                           | 认证机制设计或实现不当，使得攻击者能够冒充他人、使用失效/伪造凭证访问 API。                                                                             | 使用标准认证协议（如 OAuth2 / OpenID Connect）；保护令牌（token）不被窃取；令牌的过期、撤销机制；登录失败速率限制等。        |
-| **API3:2023**  | **Broken Object Property Level Authorization（对象属性级授权失效）**        | 合并了 2019 年版的 “Excessive Data Exposure（过度数据暴露）” 和 “Mass Assignment（大规模赋值）” 两项。即即使某个对象可访问，也可能暴露该对象中敏感属性（例如密码、内部状态字段等）。 | 在序列化 / 响应阶段做字段过滤，只返回客户端有权访问的字段；对写操作限制可更新属性；基于角色/权限的字段级访问控制。                      |
-| **API4:2023**  | **Unrestricted Resource Consumption（资源消耗不受限）**                   | API 服务若对请求频次、大小、复杂度等没有限制，会被滥用（如“刷接口”、“DOS”）导致资源耗尽、服务不可用或成本暴增。                                                        | 实施速率限制（rate limiting）、配额（quotas）、限制请求体大小、限制深度 / 递归 /复杂度、检测异常请求模式。                |
-| **API5:2023**  | **Broken Function Level Authorization（功能级授权失效）**                 | 即使对象级访问受到控制，某些 API 功能（如管理操作、删除功能、敏感流程）可能没有做权限校验，允许普通用户调用不该调用的操作。                                                     | 在每个功能点（endpoint / 方法）做权限校验，区分普通用户与管理用户；模块化 / 分层设计，将敏感功能与普通功能隔离；最小权限原则。           |
-| **API6:2023**  | **Unrestricted Access to Sensitive Business Flows（敏感业务流程访问不受限）** | 有些 API 暴露了关键的业务流程（如支付、下单、退款等），如果没有额外保护（如频次限制、业务规则校验），攻击者就可能滥用这些流程，造成业务损失。                                            | 对涉及高价值/敏感业务的接口加额外检查（如反欺诈、行为分析、验证码、业务阈值控制等）；监控异常行为；强设计业务边界。                       |
-| **API7:2023**  | **Server Side Request Forgery（SSRF，服务端请求伪造）**                    | API 接受一个 URL 或 URI 让后端服务器去请求资源（如从第三方 URL 获取内容），但如果没有对该 URL 做严格校验，攻击者可能让服务器访问内部网络、云服务元数据服务、私有服务等。                     | 白名单 / 黑名单校验 URI；禁止访问内部网络 / 本地地址；对外部请求做隔离 /代理；限制 DNS / URL 重定向；对外请求做严格校验。         |
-| **API8:2023**  | **Security Misconfiguration（安全配置错误 / 配置失误）**                     | API 所在的基础设施（服务器、网关、中间件、CORS、跨域、HTTP 头、日志、调试接口等）配置不当可能引入漏洞。                                                           | 关闭不必要服务、端点与调试接口；正确设置 CORS、HTTPS、HTTP 头（如 HSTS、CSP 等）；环境隔离；最小权限运行；自动化配置检查 / 安全验证。 |
-| **API9:2023**  | **Improper Inventory Management（接口 / 版本 / 资产清单管理不当）**            | API 常有多个版本、多个子路径、多个域，若没有对接口清单 / 版本进行管理和维护，遗留的旧版本、隐藏接口、调试接口可能被攻击者发现并利用。                                               | 建立 API 资产清单（API 目录）；对废弃 / 弃用接口做下线；隐藏或限制调试 /内部接口；接口文档与实际接口同步；自动化扫描与审计。            |
-| **API10:2023** | **Unsafe Consumption of APIs（不安全的 API 调用 / 消费）**                 | 客户端或后端对被调用的第三方 API 依赖过强，不严格验证第三方返回的数据，或信任第三方输入，导致攻击者通过第三方入侵链路。                                                       | 客户端或后端调用第三方 API 时做输入校验、输出校验、错误处理，不盲目信任数据；隔离第三方服务；对第三方接口调用做熔断、校验、策略控制。            |
+  * 使用 “Login with Google / Apple / Microsoft” 登录某个应用时，应用能拿到用户的身份信息（不是只有授权用的 access token）。
 
 ---
 
-如果你愿意的话，我可以给你一个中文版的整理（中文名称 + 更详细的示例与防护策略），或者专门针对你所在行业（比如金融、医疗、电商等）的 API 风险清单。你要吗？
+## 3. 关系
 
-[1]: https://owasp.org/API-Security/editions/2023/en/0x11-t10/?utm_source=chatgpt.com "OWASP Top 10 API Security Risks – 2023"
-[2]: https://apisecurity.io/owasp-api-security-top-10/?utm_source=chatgpt.com "OWASP API Security Top 10 Vulnerabilities: 2023"
+* **OAuth 2.0**：只管“授权” → 第三方能不能访问资源
+* **OIDC**：在 OAuth 2.0 上扩展，额外处理“认证” → 确认用户是谁
+
+👉 可以理解为：
+
+* OAuth 2.0 = “你能不能访问”
+* OIDC = “你是谁 + 你能不能访问”
+
+---
+
+## 4. 举例对比
+
+* **OAuth 2.0**：
+
+  * 你登录一个日历应用，它请求访问你的 Google Calendar。
+  * Google 返回一个 **access token**，日历应用用它去读取/写入日历。
+  * 这里应用知道它“被授权”访问，但不一定知道“你是谁”。
+
+* **OIDC**：
+
+  * 你用 “Login with Google” 登录某网站。
+  * 网站通过 OIDC 拿到一个 **ID token**，里面写了用户的唯一 ID、邮箱、名字。
+  * 这样网站就知道登录的是谁。
+
+---
+
+## 5. 总结表格
+
+| 项目          | OAuth 2.0         | OIDC                                    |
+| ----------- | ----------------- | --------------------------------------- |
+| 关注点         | 授权（Authorization） | 认证 + 授权（Authentication + Authorization） |
+| 返回的主要 Token | Access Token      | Access Token + ID Token                 |
+| 能不能知道用户身份   | ❌ 不保证             | ✅ 可以（通过 ID Token / UserInfo）            |
+| 场景          | 授权第三方访问资源         | 第三方应用“社交登录”/单点登录（SSO）                   |
+
+---
+| OIDC             | OAuth                         | 说明                                                                 |
+|------------------|-------------------------------|----------------------------------------------------------------------|
+| EU End User      | RS Resource Owner             | 指用户                                                              |
+| RP Relying Party | Client Third-party application| 客户端，可以理解为你的前端                                          |
+| OP OpenID Provider | AS Authorization Server      | 认证服务（Authing）                                                 |
+| Resource Server  | RS Resource Server            | 资源服务器，可以理解为你的后台                                      |
+| Endpoint         | Endpoint                      | 端点，即提供的 API 接口                                             |
+| ID Token         | 无                            | 身份令牌（JWT），用于标识用户身份已经认证，可用于获取到用户身份信息 |
+| Access Token     | Access Token                  | 访问令牌（JWT），适用于 API 的访问鉴权，通常前端携带 AccessToken 访问后台 |
+| User Agent       | User Agent                    | 应用运行端，如浏览器、手机端                                        |
+
+OAuth defines two types of clients: confidential clients and public clients.
+
+Confidential clients are applications that are able to securely authenticate with the authorization server, for example being able to keep their registered client secret safe.
+
+Public clients are unable to use registered client secrets, such as applications running in a browser or on a mobile device.
+
+Confidential Clients 机密型应用：能够安全的存储凭证（client_secret），例如有后端服务，你的前端是 Vue，后台是 Java ，那么可以理解为机密性应用，因为你的后端能够安全的保存 client_secret，而不会将 client_secret 直接暴露给用户，此时你可以使用授权码模式。
+比如后端服务调用第三方。
+
+Public Clients 公共型应用：无法安全存储凭证（Client Secrets），例如 SPA 、移动端、或者完全前后端分离的应用，应当使用授权码 + PKCE 模式
+
+| 授权模式 (Grant Type)       | Confidential Clients 适用 | Public Clients 适用 | 说明 |
+|-----------------------------|---------------------------|---------------------|------|
+| Authorization Code          | ✅ 是（可用 client_secret） | ✅ 是（必须结合 PKCE） | 最常用模式，适合 Web 应用、SPA、移动端。Public Client 必须用 PKCE 防止授权码劫持。 |
+| Implicit (已弃用)           | ⚠️ 曾经支持，但已不推荐    | ⚠️ 曾经支持，但已不推荐 | 原本是为 Public Client（SPA）设计，但因安全问题被 OIDC/OAuth2.1 弃用。 |
+| Client Credentials          | ✅ 是                      | ❌ 否                | 适用于服务端到服务端（M2M）通信，无用户参与。 |
+| Resource Owner Password (ROPC) | ✅ 可用（但强烈不推荐） | ✅ 可用（但强烈不推荐） | 用户直接把账号密码给客户端，极不安全，在 OAuth2.1 里已弃用。 |
+| Device Code                 | ❌ 否                      | ✅ 是                | 适用于无浏览器/输入受限设备（如电视、IoT），Public Client 常用。 |
+| Refresh Token               | ✅ 是（可长期安全保存）     | ✅ 是（推荐结合 PKCE + Rotating Refresh Tokens） | 用于长期会话维持。Public Client 必须防止泄露。 |
 
 
 
-以及[OWASP大型语言模型与生成式AI十大风险（2025)](https://genai.owasp.org/resource/owasp%E5%A4%A7%E5%9E%8B%E8%AA%9E%E8%A8%80%E6%A8%A1%E5%9E%8B%E5%8F%8A%E7%94%9F%E6%88%90%E5%BC%8F-ai-%E5%8D%81%E5%A4%A7%E9%A2%A8%E9%9A%AA%EF%BC%882025/)
+02 授权模式详细介绍
+2.1 授权码模式（Authorization Code）
+授权码模式适合应用具备后端服务器的场景。授权码模式要求应用必须能够安全存储密钥，用于后续使用授权码换 Access Token。授权码模式需要通过浏览器与终端用户交互完成认证授权，然后通过浏览器重定向将授权码发送到后端服务，之后进行授权码换 Token 以及 Token 换用户信息。
 
+整体上，有以下流程：
+
+在你的应用中，让用户访问登录链接，浏览器跳转到 Authing，用户在 Authing 完成认证。
+浏览器接收到一个从 Authing 服务器发来的授权码。
+浏览器通过重定向将授权码发送到你的应用后端。
+你的应用服务将授权码发送到 Authing 获取 AccessToken 和 IdToken，如果需要，还会返回 refresh token。
+你的应用后端现在知道了用户的身份，后续可以保存用户信息，重定向到前端其他页面，使用 AccessToken 调用资源方的其他 API 等等。![](assets/17587817606860.jpg)
+
+你这段话在描述 **OAuth 2.1 的授权码模式 (Authorization Code Flow)** 的核心机制，我帮你拆开解释一下 👇
+
+---
+
+## 逐句解读
+
+> **“授权码模式适合应用具备后端服务器的场景。”**
+
+* 授权码模式（不带 PKCE 的传统版本）假设应用是 **Confidential Client**（机密客户端）。
+* 意思是：应用有后端服务器，可以安全保存 **client_secret**（客户端密钥），不会泄露给用户。
+
+---
+
+> **“授权码模式要求应用必须能够安全存储密钥，用于后续使用授权码换 Access Token。”**
+
+* 关键点：**换取 Access Token 时需要用 client_id + client_secret**。
+* 因为只有后端服务器才能安全保存 client_secret（前端、移动端存不安全）。
+* 所以这个模式适合有 **后端应用（比如 Java、Python、.NET Web 服务）** 的场景。
+
+---
+
+> **“授权码模式需要通过浏览器与终端用户交互完成认证授权，然后通过浏览器重定向将授权码发送到后端服务”**
+
+* 用户在浏览器里看到授权页面（例如 Google 登录）。
+* 用户点“同意”后，授权服务器会通过 **重定向 URL** 把一个 **授权码（Authorization Code）** 发回给应用的后端。
+* 注意：授权码不是 token，本身没法直接访问资源。
+
+---
+
+> **“之后进行授权码换 Token 以及 Token 换用户信息。”**
+
+* 后端拿到授权码后，再用 **client_secret + 授权码** 去换 **Access Token**（还有可能拿到 Refresh Token）。
+* Access Token 用来访问 **Resource Server**（API）。
+* 如果是 OIDC，还可以用 **ID Token** 或者调用 **UserInfo Endpoint** 来获取用户身份信息。
+
+---
+
+## 简单流程图 (OAuth 2.1 授权码模式)
+
+1. **用户 → 浏览器**：访问应用，点击 “使用 Google 登录”。
+2. **浏览器 → 授权服务器**：跳转到 Google 授权页面，用户输入账号密码。
+3. **授权服务器 → 浏览器**：认证成功，返回一个 **Authorization Code**，通过 redirect URL 发送给应用后端。
+4. **后端应用 → 授权服务器**：后端用 Authorization Code + client_secret 请求 Access Token。
+5. **授权服务器 → 后端应用**：返回 Access Token（+ Refresh Token，+ ID Token）。
+6. **后端应用 → 资源服务器**：携带 Access Token，访问用户的受保护资源（例如用户资料）。
+
+---
+
+## 一句话总结
+
+**OAuth 2.1 授权码模式**就是：
+👉 用户先在浏览器里完成登录 → 授权服务器给应用后端一个“授权码” → 后端用这个授权码 + client_secret 去换 Access Token → 再拿 Access Token 获取资源或用户信息。
+
+---
+
+
+PCKE安全性探讨
+oauth2.1新增的。
+为什么HTTPS下授权码仍可能被窃？
+因为授权码通过浏览器重定向传递的 不是在Http Request body中，（如https://client.com/callback?code=xxx），虽然HTTPS加密传输，但以下场景可能泄露：
+浏览器历史记录/日志：URL可能被记录在设备或代理日志中。
+恶意浏览器扩展：可读取页面URL中的授权码。
+跨站脚本（XSS）：如果客户端网站有XSS漏洞，攻击者可窃取URL中的code。
+PKCE 主要保护授权码（Authorization Code）到 Access Token 的兑换过程。这个过程保护的再好， Access Token泄漏，也没有用。
+之所以有PKCE，主要就是通过授权码换Access Token过程是通过浏览器重定向来完成的。且client_secrite在客户端存储，保证client_secret泄漏了也能安全的运行。PKEC不依赖client_secret
+
+
+2.2 授权码 + PKCE 模式（Authorization Code With PKCE）
+如果你的应用是一个 SPA 前端应用或移动端 App，建议使用授权码 + PKCE 模式来完成用户的认证和授权。授权码 + PKCE 模式适合不能安全存储密钥的场景（例如前端浏览器) 。
+
+我们解释下 code_verifier 和 code_challenge。
+
+code_verifier：在 [A-Z] / [a-z] / [0-9] / "-" / "." / "_" / "~" 范围内，生成43-128位的随机字符串。 code_challenge：则是对 code_verifier 通过 code_challenge_method 例如 sha256 转换得来的。
+
+用大白话讲下就是在认证是用户携带的是加密后的 code_challenge ，在用户认证成功获取 Token 时，客户端证明自己的方式则是把 code_verifier 原文发送，认证中心收到获取 Token 请求时通过 code_verifier + code_challenge_method 进行转换，发现最终结果与 code_challenge 匹配则返回 Token ，否则拒绝。
+不完全是。HTTPS 只是 **保证传输过程中不被中间人窃取**，是基础安全措施，但 **PKCE 的核心安全设计**并不依赖 HTTPS。我们可以分开看：
+
+---
+
+### 1. PKCE 的核心安全点
+
+PKCE 的关键在于 **绑定授权码和 code_verifier**：
+
+1. 客户端生成随机 `code_verifier`。
+2. 客户端发送 `code_challenge = BASE64URL(SHA256(code_verifier))` 到授权服务器。
+3. 授权服务器只知道 `code_challenge`，并不知道 `code_verifier`。
+4. 当客户端用授权码换取 Access Token 时，必须提交原始 `code_verifier`。
+5. 服务器验证 `code_challenge == SHA256(code_verifier)`，匹配才发 Token。
+
+**安全性来源**：
+
+* 即使授权码被截获（例如通过浏览器重定向 URL 泄露），攻击者也 **不知道 code_verifier**，因此无法换 Token。
+* 换句话说，PKCE **把授权码变成了单次、绑定客户端的令牌**。
+
+---
+
+### 2. HTTPS 的作用
+
+* **HTTPS 保证传输安全**，防止 code_verifier 或授权码在网络中被窃听。
+* 如果没有 HTTPS，即使 PKCE，code_verifier 在网络中被截获，攻击者就能用它换 Token。
+* 所以 HTTPS 是必要的，但 PKCE 的设计本身是为了 **即使授权码被截获也不能滥用**。
+
+---
+
+### ✅ 总结
+
+* **PKCE 核心原因**：绑定授权码和客户端的 `code_verifier`，即使授权码泄露也没用。
+* **HTTPS 作用**：防止 code_verifier 或授权码在传输中被监听，是加固措施，但不是 PKCE 安全性的根本。
+
+---
+不完全是。HTTPS 只是 **保证传输过程中不被中间人窃取**，是基础安全措施，但 **PKCE 的核心安全设计**并不依赖 HTTPS。我们可以分开看：
+
+---
+
+### 1. PKCE 的核心安全点
+
+PKCE 的关键在于 **绑定授权码和 code_verifier**：
+
+1. 客户端生成随机 `code_verifier`。
+2. 客户端发送 `code_challenge = BASE64URL(SHA256(code_verifier))` 到授权服务器。
+3. 授权服务器只知道 `code_challenge`，并不知道 `code_verifier`。
+4. 当客户端用授权码换取 Access Token 时，必须提交原始 `code_verifier`。
+5. 服务器验证 `code_challenge == SHA256(code_verifier)`，匹配才发 Token。
+
+**安全性来源**：
+
+* 即使授权码被截获（例如通过浏览器重定向 URL 泄露），攻击者也 **不知道 code_verifier**，因此无法换 Token。
+* 换句话说，PKCE **把授权码变成了单次、绑定客户端的令牌**。
+
+---
+
+### 2. HTTPS 的作用
+
+* **HTTPS 保证传输安全**，防止 code_verifier 或授权码在网络中被窃听。
+* 如果没有 HTTPS，即使 PKCE，code_verifier 在网络中被截获，攻击者就能用它换 Token。
+* 所以 HTTPS 是必要的，但 PKCE 的设计本身是为了 **即使授权码被截获也不能滥用**。
+
+---
+
+### ✅ 总结
+
+* **PKCE 核心原因**：绑定授权码和客户端的 `code_verifier`，即使授权码泄露也没用。
+* **HTTPS 作用**：防止 code_verifier 或授权码在传输中被监听，是加固措施，但不是 PKCE 安全性的根本。
+
+---
+
+如果你想，我可以画一张图对比 **普通 Authorization Code 流程 vs PKCE 流程**，直观看出 PKCE 是如何防止授权码被滥用的。
+
+你想看这个图吗？
+
+
+如果你想，我可以画一张图对比 **普通 Authorization Code 流程 vs PKCE 流程**，直观看出 PKCE 是如何防止授权码被滥用的。
+
+你想看这个图吗？
+
+
+整体上，有以下流程:
+
+在你的应用中，让用户访问登录链接(包含 code_challenge ) ，浏览器跳转到 Authing，用户在 Authing 完成认证。
+浏览器接收到一个从 Authing 服务器发来的授权码。
+浏览器通过重定向将授权码发送到你的应用前端。
+你的应用将授权码和 code_verifier 发送到 Authing 获取 AccessToken 和 IdToken，如果需要，还会返回 Refresh token。
+你的应用前端现在知道了用户的身份，后续使用 Access token 换取用户信息，重定向到前端其他页面，使用 AccessToken 调用资源方的其他 API 等等。
+流程图如下：
+
+
+2.3 客户端凭证模式（Client Credentials）
+Client Credentials 模式用于进行服务器对服务器间的授权（M2M 授权），期间没有用户的参与。你需要创建编程访问账号，并将 AK、SK 密钥对交给你的资源调用方。
+
+注意：Client Credentials 模式不支持 Refresh Token。
+
+整体上，有以下流程：
+
+资源调用方将他的凭证 AK、SK 以及需要请求的权限 scope 发送到 Authing 授权端点。
+如果凭证正确，并且调用方具备资源权限，Authing 为其颁发 AccessToken。
+流程图如下：
+![](assets/17587818720082.jpg)
 
